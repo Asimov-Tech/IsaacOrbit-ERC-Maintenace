@@ -54,7 +54,7 @@ from omni.isaac.orbit_assets import UR10_CFG  # isort:skip
 #    """Action specifications for the environment."""
 #
 #    joint_efforts = mdp.JointEffortActionCfg(asset_name="robot", joint_names=[".*"], scale=5.0)
-
+# this is a try This has been modified
 
 
 @configclass
@@ -63,7 +63,6 @@ class TaskBoardEnvCfg(BaseEnvCfg):
 
     # Scene settings
     scene = base_taskboards_env_cfg.TaskBoardSceneCfg(num_envs=1024, env_spacing=2.5)
-    
     # Basic settings
     #observations = ObservationsCfg()
     #actions = ActionsCfg()
