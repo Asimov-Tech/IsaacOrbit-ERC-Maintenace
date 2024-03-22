@@ -31,8 +31,7 @@ app_launcher = AppLauncher(args_cli)
 simulation_app = app_launcher.app
 
 """Rest everything follows."""
-#dwadwada testa
-#did it work
+
 import math
 import torch
 import omni.isaac.orbit.envs.mdp as mdp
@@ -49,13 +48,35 @@ from omni.isaac.orbit_assets import UR10_CFG  # isort:skip
 
 ###--------------------------------------------------------------------------------------------
 
-#@configclass
-#class ActionsCfg:
-#    """Action specifications for the environment."""
-#
-#    joint_efforts = mdp.JointEffortActionCfg(asset_name="robot", joint_names=[".*"], scale=5.0)
+@configclass
+class ActionsCfg:
+    """Action specifications for the environment."""
+
+    joint_efforts = mdp.JointEffortActionCfg(asset_name="robot", joint_names=[".*"], scale=5.0)
 # this is a try This has been modified
 
+@configclass
+class ObservationsCfg:
+    """Observation specifications for the environment."""
+
+    @configclass
+    class PolicyCfg(ObsGroup):
+        """Observations for policy group."""
+
+        # observation terms (order preserved)
+        joint_pos_rel = ObsTerm(func=mdp.joint_pos_rel)
+        joint_vel_rel = ObsTerm(func=mdp.joint_vel_rel)
+
+        def __post_init__(self) -> None:
+            self.enable_corruption = False
+            self.concatenate_terms = True
+
+    # observation groups
+    policy: PolicyCfg = PolicyCfg()
+
+
+
+#------------------------------------------------------------------------ Old stuff that works
 
 @configclass
 class TaskBoardEnvCfg(BaseEnvCfg):
@@ -64,8 +85,8 @@ class TaskBoardEnvCfg(BaseEnvCfg):
     # Scene settings
     scene = base_taskboards_env_cfg.TaskBoardSceneCfg(num_envs=1024, env_spacing=2.5)
     # Basic settings
-    #observations = ObservationsCfg()
-    #actions = ActionsCfg()
+    observations = ObservationsCfg()
+    actions = ActionsCfg()
     #randomization = RandomizationCfg()
 
     def __post_init__(self):
@@ -101,8 +122,8 @@ def main():
             joint_efforts = torch.randn_like(env.action_manager.action)
             # step the environment
             obs, _ = env.step(joint_efforts)
-            # print current orientation of pole
-            #print("[Env 0]: Pole joint: ", obs["policy"][0][1].item())
+            # print something
+            print(obs["policy"][0][1].item())
             # update counter
             count += 1
 
