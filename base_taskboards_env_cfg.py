@@ -47,8 +47,16 @@ class TaskBoardSceneCfg(InteractiveSceneCfg):
     # Cube for robot
     cube = AssetBaseCfg(
         prim_path="{ENV_REGEX_NS}/Cuboid",
-        spawn=sim_utils.CuboidCfg(size=(0.15, 0.15, 1)),
+        spawn=sim_utils.CuboidCfg(size=(0.4, 0.2, 1.0)),
     )
+
+    # TableCube for robot
+    table = AssetBaseCfg(
+        prim_path="{ENV_REGEX_NS}/Cuboid/Table",
+        spawn=sim_utils.CuboidCfg(size=(0.15, 0.30, 1)),
+        init_state=AssetBaseCfg.InitialStateCfg(pos=(0.0, 0.2, -0.07))
+    )
+
 
     #robot
     UR10_CFG.init_state.pos = (0.0, 0.0, .5)
@@ -137,24 +145,24 @@ class ObservationsCfg:
 #                                             scale=100.0)
 
 
-#@configclass
-#class ObservationsCfg:
-#    """Observation specifications for the MDP."""
-#
-#    @configclass
-#    class PolicyCfg(ObsGroup):
-#        """Observations for policy group."""
-#
-#        # observation terms (order preserved)
-#        joint_pos_rel = ObsTerm(func=mdp.joint_pos_rel)
-#        joint_vel_rel = ObsTerm(func=mdp.joint_vel_rel)
-#
-#        def __post_init__(self) -> None:
-#            self.enable_corruption = False
-#            self.concatenate_terms = True
-#
-#    # observation groups
-#    policy: PolicyCfg = PolicyCfg()
+@configclass
+class ObservationsCfg:
+    """Observation specifications for the MDP."""
+
+    @configclass
+    class PolicyCfg(ObsGroup):
+        """Observations for policy group."""
+
+        # observation terms (order preserved)
+        joint_pos_rel = ObsTerm(func=mdp.joint_pos_rel)
+        joint_vel_rel = ObsTerm(func=mdp.joint_vel_rel)
+
+        def __post_init__(self) -> None:
+            self.enable_corruption = False
+            self.concatenate_terms = True
+
+    # observation groups
+    policy: PolicyCfg = PolicyCfg()
 
 
 #@configclass
