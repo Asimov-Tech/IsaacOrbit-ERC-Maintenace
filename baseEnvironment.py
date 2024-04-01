@@ -19,7 +19,7 @@ from omni.isaac.orbit.app import AppLauncher
 
 # add argparse arguments
 parser = argparse.ArgumentParser(description="Tutorial on creating a cartpole base environment.")
-parser.add_argument("--num_envs", type=int, default=64, help="Number of environments to spawn.")
+parser.add_argument("--num_envs", type=int, default=4, help="Number of environments to spawn.")
 
 # append AppLauncher cli args
 AppLauncher.add_app_launcher_args(parser)
@@ -34,16 +34,18 @@ simulation_app = app_launcher.app
 
 import math
 import torch
-import omni.isaac.orbit.envs.mdp as mdp
-from omni.isaac.orbit.envs import BaseEnv, BaseEnvCfg
-from omni.isaac.orbit.managers import ObservationGroupCfg as ObsGroup
-from omni.isaac.orbit.managers import ObservationTermCfg as ObsTerm
-from omni.isaac.orbit.managers import RandomizationTermCfg as RandTerm
-from omni.isaac.orbit.managers import SceneEntityCfg
-from omni.isaac.orbit.utils import configclass
+#import omni.isaac.orbit.envs.mdp as mdp
+#from omni.isaac.orbit.envs import BaseEnv, BaseEnvCfg
+#from omni.isaac.orbit.managers import ObservationGroupCfg as ObsGroup
+#from omni.isaac.orbit.managers import ObservationTermCfg as ObsTerm
+#from omni.isaac.orbit.managers import RandomizationTermCfg as RandTerm
+#from omni.isaac.orbit.managers import SceneEntityCfg
+#from omni.isaac.orbit.utils import configclass
 from omni.isaac.orbit.envs import RLTaskEnv
 #from omni.isaac.orbit_tasks.classic.cartpole.cartpole_env_cfg import CartpoleSceneCfg
 from base_taskboards_env_cfg import TaskBoardEnvCfg
+#from omni.isaac.orbit.sim.schemas.schemas_cfg import RigidBodyPropertiesCfg
+#from omni.isaac.orbit.sim.spawners.from_files.from_files_cfg import UsdFileCfg
 
 from omni.isaac.orbit_assets import UR10_CFG  # isort:skip
 

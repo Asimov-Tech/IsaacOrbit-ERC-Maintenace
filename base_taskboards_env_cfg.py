@@ -10,14 +10,20 @@ from omni.isaac.orbit.assets import ArticulationCfg, AssetBaseCfg, RigidObject, 
 from omni.isaac.orbit.envs import RLTaskEnvCfg
 from omni.isaac.orbit.managers import ObservationGroupCfg as ObsGroup
 from omni.isaac.orbit.managers import ObservationTermCfg as ObsTerm
-from omni.isaac.orbit.managers import RandomizationTermCfg as RandTerm
-from omni.isaac.orbit.managers import RewardTermCfg as RewTerm
-from omni.isaac.orbit.managers import SceneEntityCfg
-from omni.isaac.orbit.managers import TerminationTermCfg as DoneTerm
+#from omni.isaac.orbit.managers import RandomizationTermCfg as RandTerm
+#from omni.isaac.orbit.managers import RewardTermCfg as RewTerm #| Old implementation
+#import taskboard_rewards as RewTerm                           # | Own implementation
+#from omni.isaac.orbit.managers import SceneEntityCfg
+#from omni.isaac.orbit.managers import TerminationTermCfg as DoneTerm
 from omni.isaac.orbit.scene import InteractiveSceneCfg
+from omni.isaac.orbit.sim.schemas.schemas_cfg import RigidBodyPropertiesCfg
 from omni.isaac.orbit.utils import configclass
 from omni.isaac.orbit.sim.spawners.from_files.from_files_cfg import GroundPlaneCfg, UsdFileCfg
-import omni.isaac.orbit_tasks.classic.cartpole.mdp as mdp
+#import omni.isaac.orbit_tasks.classic.cartpole.mdp as mdp # | Old implementation
+
+
+
+import omni.isaac.orbit_tasks.manipulation.lift.mdp as mdp # | Own Implementation
 
 import omni.isaac.orbit.sim as sim_utils
 from omni.isaac.orbit.utils.assets import ISAAC_NUCLEUS_DIR
@@ -31,9 +37,6 @@ from omni.isaac.orbit_assets import UR10_CFG  # isort:skip
 
 ##
 # Scene definition
-##This works=?
-
-#TODO Fix prim paths 
 @configclass
 class TaskBoardSceneCfg(InteractiveSceneCfg):
     """Configuration for a task-board scene."""
@@ -49,14 +52,6 @@ class TaskBoardSceneCfg(InteractiveSceneCfg):
         prim_path="{ENV_REGEX_NS}/Cuboid",
         spawn=sim_utils.CuboidCfg(size=(0.4, 0.2, 1.0)),
     )
-
-    # TableCube for robot
-    table = AssetBaseCfg(
-        prim_path="{ENV_REGEX_NS}/Cuboid/Table",
-        spawn=sim_utils.CuboidCfg(size=(0.15, 0.30, 1)),
-        init_state=AssetBaseCfg.InitialStateCfg(pos=(0.0, 0.2, -0.07))
-    )
-
 
     #robot
     UR10_CFG.init_state.pos = (0.0, 0.0, .5)
@@ -82,6 +77,87 @@ class TaskBoardSceneCfg(InteractiveSceneCfg):
         
         #init_state= InitialStateCfg()
     )
+    # Object to move 
+    #table = RigidObjectCfg(
+    #            prim_path="{ENV_REGEX_NS}/Table",
+    #            init_state=RigidObjectCfg.InitialStateCfg(pos=[0.014, 0.265, 0.0], rot=[1, 0, 0, 0]),
+    #            spawn=sim_utils.CuboidCfg(size=(0.15, 0.30, 0.25),
+    #                rigid_props=RigidBodyPropertiesCfg(
+    #                    solver_position_iteration_count=16,
+    #                    solver_velocity_iteration_count=1,
+    #                    max_angular_velocity=1000.0,
+    #                    max_linear_velocity=1000.0,
+    #                    max_depenetration_velocity=5.0,
+    #                    disable_gravity=True,
+    #                ),
+    #            ),
+    #        )
+
+    # TableCube for robot
+    #table = RigidObjectCfg(
+    #    prim_path="{ENV_REGEX_NS}/Cuboid/Table",
+    #    spawn=sim_utils.CuboidCfg(size=(0.15, 0.30, 1),
+    #    rigid_props=RigidBodyPropertiesCfg(
+    #        solver_position_iteration_count=16,
+    #        solver_velocity_iteration_count=1,
+    #        max_angular_velocity=1000.0,
+    #        max_linear_velocity=1000.0,
+    #        max_depenetration_velocity=5.0,
+    #        disable_gravity=False)),
+    #    init_state=AssetBaseCfg.InitialStateCfg(pos=(0.0, 0.2, -0.07))
+    #
+    #)    
+
+
+    # Object to move 
+    object = RigidObjectCfg(
+                prim_path="{ENV_REGEX_NS}/Object",
+                init_state=RigidObjectCfg.InitialStateCfg(pos=[0, 0.25, 0.8], rot=[1, 0, 0, 0]),
+                spawn=UsdFileCfg(
+                    usd_path=f"{ISAAC_NUCLEUS_DIR}/Props/Blocks/DexCube/dex_cube_instanceable.usd",
+                    scale=(0.8, 0.8, 0.8),
+                    rigid_props=RigidBodyPropertiesCfg(
+                        solver_position_iteration_count=16,
+                        solver_velocity_iteration_count=1,
+                        max_angular_velocity=1000.0,
+                        max_linear_velocity=1000.0,
+                        max_depenetration_velocity=5.0, 
+                        disable_gravity=False,
+                    ),
+                ),
+            )
+
+    table = AssetBaseCfg(
+        prim_path="{ENV_REGEX_NS}/Table",
+        init_state=AssetBaseCfg.InitialStateCfg(pos=[-0.23, 0.1200, 0,], rot=[1, 0, 0, 0]),
+        spawn=UsdFileCfg(usd_path="/home/chris/Desktop/ws_sims/Models/TableMahog.usdc",scale=[0.0008,0.0008,0.0008]),
+    )
+
+    #table = RigidObjectCfg(
+    #            prim_path="{ENV_REGEX_NS}/Table",
+    #            init_state=RigidObjectCfg.InitialStateCfg(pos=[-0.14, 0.25, 0.0], rot=[1, 0, 0, 0]),
+    #            spawn=UsdFileCfg(
+    #            usd_path="/home/chris/Desktop/ws_sims/Models/TableMahog.usdc"
+    #            ,scale=(0.001,0.001,0.001),
+    #                #scale=(0.8, 0.8, 0.8),
+    #                rigid_props=RigidBodyPropertiesCfg(
+    #                    solver_position_iteration_count=16,
+    #                    solver_velocity_iteration_count=1,
+    #                    max_angular_velocity=1000.0,
+    #                    max_linear_velocity=1000.0,
+    #                    max_depenetration_velocity=5.0, 
+    #                    disable_gravity=False,
+    #                ),
+    #            ),
+    #        )
+
+
+
+
+
+
+
+
 
 @configclass
 class CommandsCfg:
@@ -96,7 +172,7 @@ class ActionsCfg:
     """Action specifications for the environment."""
 
     joint_efforts = mdp.JointEffortActionCfg(asset_name="robot", joint_names=[".*"], scale=100.0)
-# this is a try This has been modified
+
 
 @configclass
 class ObservationsCfg:
@@ -195,29 +271,30 @@ class ObservationsCfg:
 class RewardsCfg:
     """Reward terms for the MDP."""
 
-    # (1) Constant running reward
-    alive = RewTerm(func=mdp.is_alive, weight=1.0)
-    # (2) Failure penalty
-    terminating = RewTerm(func=mdp.is_terminated, weight=-2.0)
-    # (3) Primary task: keep pole upright
-    pole_pos = RewTerm(
-        func=mdp.joint_pos_target_l2,
-        weight=-1.0,
-        params={"asset_cfg": SceneEntityCfg("robot", joint_names=[".*"]), "target": 0.0},
-    )
-    # (4) Shaping tasks: lower cart velocity
-    cart_vel = RewTerm(
-        func=mdp.joint_vel_l1,
-        weight=-0.01,
-        params={"asset_cfg": SceneEntityCfg("robot", joint_names=[".*"])},
-    )
-    # (5) Shaping tasks: lower pole angular velocity
-    pole_vel = RewTerm(
-        func=mdp.joint_vel_l1,
-        weight=-0.005,
-        params={"asset_cfg": SceneEntityCfg("robot", joint_names=[".*"])},
-    )
+    ## (1) Constant running reward
+    #alive = RewTerm(func=mdp.is_alive, weight=1.0)
+    ## (2) Failure penalty
+    #terminating = RewTerm(func=mdp.is_terminated, weight=-2.0)
+    ## (3) Primary task: keep pole upright
+    #pole_pos = RewTerm(
+    #    func=mdp.joint_pos_target_l2,
+    #    weight=-1.0,
+    #    params={"asset_cfg": SceneEntityCfg("robot", joint_names=[".*"]), "target": 0.0},
+    #)
+    ## (4) Shaping tasks: lower cart velocity
+    #cart_vel = RewTerm(
+    #    func=mdp.joint_vel_l1,
+    #    weight=-0.01,
+    #    params={"asset_cfg": SceneEntityCfg("robot", joint_names=[".*"])},
+    #)
+    ## (5) Shaping tasks: lower pole angular velocity
+    #pole_vel = RewTerm(
+    #    func=mdp.joint_vel_l1,
+    #    weight=-0.005,
+    #    params={"asset_cfg": SceneEntityCfg("robot", joint_names=[".*"])},
+    #)
 
+    #lifting_object = RewTerm(func=mdp.object_is_lifted, params={"minimal_height": 0.06}, weight=15.0)
 
 #@configclass
 #class TerminationsCfg:
